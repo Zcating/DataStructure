@@ -1,10 +1,12 @@
 //////////declare//////////////////
-#ifndef _GRAPH_H
-#define _GRAPH_H
-#define DEFAULTVERTICES 30
+#ifndef _GRaPH_H
+#define _GRaPH_H
+#define DEFaULTVERTICES 30
 typedef int EdgeStruct;//weight of the edge
 const EdgeStruct MAXWEIGHT = 99999;
-const int DefaultVertices = 30;
+const int defaultVertices = 30;
+
+
 enum Directivity
 {
 	Directive,
@@ -26,32 +28,15 @@ struct VerDataInfo
 	}
 };
 
+//Graph --- basical class
 template<class VerStruct>
 class Graph
 {
 public:
-	/*The default graph is undirective graph*/
-	Graph(int size = DefaultVertices) : maxVertices(size), numVertices(0),
-		numEdges(0), dirOfGraph(Undirective){};
-	~Graph(){};/*The destructive function must be structured*/
-
-	void ChangeDirectivity(Directivity dir){
-		/*Select the directive graph or the undirective graph */
-		dirOfGraph = dir;
-	}
-	bool GraphEmpty()const{
-		if (numEdges == 0) return true;
-		else return false;
-	}
-	bool GraphFull()const{
-		if (numVertices == maxVertices || numEdges == maxVertices*(maxVertices - 1) / 2)
-			return true;
-		else return false;
-	}
 	int SizeOfVertices(){ return numVertices; }
 	int SizeOfEdge(){ return numEdges; }
 	Directivity Direction() { return dirOfGraph; }
-	/*All virtual functions must be the pure virtual functions to make it inherit two different classes */
+	/*all virtual functions must be the pure virtual functions to make it inherit two different classes */
 	virtual VerStruct GetValue(int ver) = 0;
 	virtual EdgeStruct GetWeight(int ver1, int ver2) = 0;
 	virtual int GetFirstNeighbor(int ver) = 0;
@@ -60,7 +45,25 @@ public:
 	virtual bool InsertVertice(const VerStruct& vertex) = 0;
 	virtual bool RemoveVertice(int ver) = 0;
 	virtual bool RemoveEdge(int v1, int v2) = 0;
+	
+	/*The default graph is undirective graph*/
+	Graph(int size = defaultVertices) : maxVertices(size), numVertices(0),
+		numEdges(0), dirOfGraph(Undirective) {};
+	~Graph() {};/*The destructive function must be structured*/
 
+	void ChangeDirectivity(Directivity dir) {
+		/*Select the directive graph or the undirective graph */
+		dirOfGraph = dir;
+	}
+	bool GraphEmpty()const {
+		if (numEdges == 0) return true;
+		else return false;
+	}
+	bool GraphFull()const {
+		if (numVertices == maxVertices || numEdges == maxVertices*(maxVertices - 1) / 2)
+			return true;
+		else return false;
+	}
 protected:
 	int maxVertices;
 	int numEdges;
@@ -74,7 +77,7 @@ class MatrixGraph : public Graph<VerStruct>{
 	friend istream& operator >>(istream& in, MatrixGraph<VerStruct>& TheGraph);
 	friend ostream& operator <<(ostream& out, MatrixGraph<VerStruct>& TheGraph);
 public:
-	MatrixGraph(int size = DefaultVertices);
+	MatrixGraph(int size = defaultVertices);
 	~MatrixGraph();
 
 	VerStruct GetValue(int ver);
@@ -87,18 +90,18 @@ public:
 	bool RemoveEdge(int v1, int v2);
 	int GetVerticePos(VerStruct ver){
 		for (int i = 0; i < numVertices; i++)
-		if (VerticesList[i] == ver) return i;
+		if (verticesList[i] == ver) return i;
 		return -1;
 	}
 
 private:
-	VerStruct * VerticesList;
-	EdgeStruct ** Edges;
+	VerStruct * verticesList;
+	EdgeStruct ** edges;
 
 };
 
 
-///////////////////////////Adjacency List Graph
+///////////////////////////adjacency List Graph
 struct Edge
 {
 	int dest;
@@ -122,10 +125,10 @@ struct Vertex
 template<class VerStruct>
 class LinkGraph : public Graph<VerStruct>
 {
-	friend istream& operator >>(istream& in, LinkGraph<VerStruct>& TheGraph);
-	friend ostream& operator <<(ostream& out, LinkGraph<VerStruct>& TheGraph);
+	friend istream& operator >>(istream& in, LinkGraph<VerStruct>& theGraph);
+	friend ostream& operator <<(ostream& out, LinkGraph<VerStruct>& theGraph);
 public:
-	LinkGraph(int size = DefaultVertices);
+	LinkGraph(int size = defaultVertices);
 	~LinkGraph();
 	VerStruct GetValue(int ver);
 	EdgeStruct GetWeight(int v1, int v2);
@@ -137,11 +140,11 @@ public:
 	int GetNextNeighbor(int ver, int verx);
 	int GetVerticePos(VerStruct ver){
 		for (int i = 0; i < numVertices; i++)
-		if (AdjList[i].data == ver) return i;
+		if (adjList[i].data == ver) return i;
 		return -1;
 	}
 private:
-	Vertex<VerStruct> * AdjList;
+	Vertex<VerStruct> * adjList;
 };
 //////////////
 #endif
@@ -157,40 +160,40 @@ MatrixGraph<VerStruct>::MatrixGraph(int size){
 	numEdges = 0;
 	dirOfGraph = Undirective;
 	int i = 0, j = 0;
-	VerticesList = new VerStruct[maxVertices];
-	if (VerticesList == nullptr) {
+	verticesList = new VerStruct[maxVertices];
+	if (verticesList == nullptr) {
 		cout << "the graph does not allocate the memory" << endl;
 		exit(1);
 	}
-	Edges = (EdgeStruct**) new EdgeStruct *[maxVertices];
+	edges = (EdgeStruct**) new EdgeStruct *[maxVertices];
 	for (int i = 0; i < maxVertices; i++)
-		Edges[i] = new EdgeStruct[maxVertices];
+		edges[i] = new EdgeStruct[maxVertices];
 	for (int i = 0; i < maxVertices; i++)
 	for (int j = 0; j < maxVertices; j++)
-		Edges[i][j] = (i == j) ? 0 : MAXWEIGHT;
+		edges[i][j] = (i == j) ? 0 : MaXWEIGHT;
 }
 
 template<class VerStruct>
 MatrixGraph<VerStruct>:: ~MatrixGraph(){
-	delete[] VerticesList; 
-	delete[] Edges;
+	delete[] verticesList; 
+	delete[] edges;
 };
 
 template<class VerStruct>
 VerStruct MatrixGraph<VerStruct>::GetValue(int ver){
-	return VerticesList[ver];
+	return verticesList[ver];
 }
 
 template<class VerStruct>
 EdgeStruct MatrixGraph<VerStruct>::GetWeight(int ver1, int ver2){
-	return Edges[ver1][ver2];
+	return edges[ver1][ver2];
 }
 
 template<class VerStruct>
 int MatrixGraph<VerStruct>::GetFirstNeighbor(int ver){
 	if (ver != -1){
 		for (int i = 0; i < numVertices; i++)
-		if (Edges[ver][i] > 0 && Edges[ver][i] < MAXWEIGHT)return i;
+		if (edges[ver][i] > 0 && edges[ver][i] < MaXWEIGHT)return i;
 		else return -1;
 	}
 	else return -1;
@@ -200,7 +203,7 @@ template<class VerStruct>
 int MatrixGraph<VerStruct>::GetNextNeighbor(int ver, int verx){
 	if (ver != -1 && verx != -1){
 		for (int i = verx + 1; i < numVertices; i++)
-		if (Edges[ver][i] > 0 && Edges[ver][i] < MAXWEIGHT) return i;
+		if (edges[ver][i] > 0 && edges[ver][i] < MaXWEIGHT) return i;
 		else return -1;
 	}
 	else return -1;
@@ -210,9 +213,31 @@ template<class VerStruct>
 bool MatrixGraph<VerStruct>::InsertVertice(const VerStruct& vertex){
 	if (numVertices == maxVertices) return false;
 	else {
-		VerticesList[numVertices++] = vertex;
+		verticesList[numVertices++] = vertex;
 		return true;
 	}
+}
+
+template<class VerStruct>
+inline bool MatrixGraph<VerStruct>::InsertEdge(int v1, int v2, EdgeStruct weight)
+{
+	if (dirOfGraph == Undirective) {
+		if (v1>-1 && v1<numVertices && v2>-1 && v2 < numVertices && edges[v1][v2] == MaXWEIGHT) {
+			edges[v1][v2] = edges[v2][v1] = weight;
+			numedges++;
+			return true;
+		}
+		else return false;
+	}
+	else if (dirOfGraph == Directive) {
+		if (v1>-1 && v1<numVertices && v2>-1 && v2 < numVertices && edges[v1][v2] == MaXWEIGHT) {
+			edges[v1][v2] = weight;
+			numEdges++;
+			return true;
+		}
+		else return false;
+	}
+	return false;
 }
 
 
@@ -222,54 +247,36 @@ bool MatrixGraph<VerStruct>::RemoveVertice(int ver){
 	else if (numVertices == 1) return false;
 	else{
 		int i = 0;
-		VerticesList[ver] = VerticesList[numVertices - 1];
+		verticesList[ver] = verticesList[numVertices - 1];
 		for (i = 0; i < numVertices; i++)
-		if (Edges[ver][i] > 0 && Edges[ver][i] < MAXWEIGHT) numEdges--;
+		if (edges[ver][i] > 0 && edges[ver][i] < MaXWEIGHT) numEdges--;
 
 		for (i = 0; i < numVertices; i++)
-			Edges[i][ver] = Edges[i][numVertices - 1];
+			edges[i][ver] = edges[i][numVertices - 1];
 
 		numVertices--;
 		for (i = 0; i < numVertices; i++)
-			Edges[ver][i] = Edges[numVertices][i];
+			edges[ver][i] = edges[numVertices][i];
 
 		return true;
 	}
 }
 
 template<class VerStruct>
-bool MatrixGraph<VerStruct>::InsertEdge(int v1, int v2, int weight){
-	if (dirOfGraph == Undirective){
-		if (v1>-1 && v1<numVertices && v2>-1 && v2 < numVertices && Edges[v1][v2] == MAXWEIGHT){
-			Edges[v1][v2] = Edges[v2][v1] = weight;
-			numEdges++;
-			return true;
-		}
-		else return false;
-	}
-	else if (dirOfGraph == Directive){
-		if (v1>-1 && v1<numVertices && v2>-1 && v2 < numVertices && Edges[v1][v2] == MAXWEIGHT){
-			Edges[v1][v2] = weight;
-			numEdges++;
-			return true;
-		}
-		else return false;
-	}
-}
-
-template<class VerStruct>
 bool MatrixGraph<VerStruct>::RemoveEdge(int v1, int v2){
 	if (dirOfGraph == Undirective){
-		if (v1 > -1 && v1<numVertices && v2>-1 && v2 < numVertices && Edges[v1][v2]>0 && Edges[v1][v2] < MAXWEIGHT){
-			Edges[v1][v2] = Edges[v2][v1] = MAXWEIGHT;
+		if (v1 > -1 && v1<numVertices && v2>-1 && v2 < numVertices 
+			&& edges[v1][v2]>0 && edges[v1][v2] < MaXWEIGHT){
+			edges[v1][v2] = edges[v2][v1] = MaXWEIGHT;
 			numEdges--;
 			return true;
 		}
 		else return false;
 	}
 	else if (dirOfGraph == Directive){
-		if (v1 > -1 && v1<numVertices && v2>-1 && v2 < numVertices && Edges[v1][v2]>0 && Edges[v1][v2] < MAXWEIGHT){
-			Edges[v1][v2] = Edges[v2][v1] = MAXWEIGHT;
+		if (v1 > -1 && v1<numVertices && v2>-1 && v2 < numVertices 
+			&& edges[v1][v2]>0 && edges[v1][v2] < MaXWEIGHT){
+			edges[v1][v2] = edges[v2][v1] = MaXWEIGHT;
 			numEdges--;
 			return true;
 		}
@@ -302,16 +309,16 @@ istream operator >> (istream& in, MatrixGraph<VerStruct>& TheGraph){
 }
 
 template<class VerStruct>
-ostream& operator << (ostream& out, MatrixGraph<VerStruct> G){
+ostream& operator << (ostream& out, MatrixGraph<VerStruct> gra){
 	VerStruct v1, v2;
-	int numV = G.SizeOfVertices(), numE = G.SizeOfEdge();
+	int numV = gra.SizeOfVertices(), numE = gra.SizeOfEdge();
 	out << numV << "," << numE << endl;
 	for (int i = 0; i < n; i++)
 	for (int j = 0; j < n; j++){
-		EdgeStruct weight = G.GetWeight(i,j);
-		if (weight > 0 && weight < MAXWEIGHT){
-			v1 = G.GetValue(i);
-			v2 = G.GetValue(j);
+		EdgeStruct weight = gra.graetWeight(i,j);
+		if (weight > 0 && weight < MaXWEIgraHT){
+			v1 = gra.GetValue(i);
+			v2 = gra.GetValue(j);
 			cout << "( " << v1 << ", " << v2 << " )" << endl;
 		}
 	}
@@ -322,7 +329,7 @@ ostream& operator << (ostream& out, MatrixGraph<VerStruct> G){
 
 
 
-////////////Adjaceny List Graph/////////////////////////
+////////////adjaceny List Graph/////////////////////////
 
 
 template<class VerStruct>
@@ -331,37 +338,37 @@ LinkGraph<VerStruct>::LinkGraph(int size){
 	numVertices = 0;
 	numEdges = 0;
 	dirOfGraph = Undirective;
-	AdjList = new Vertex<VerStruct>[maxVertices];
-	if (AdjList == nullptr){
+	adjList = new Vertex<VerStruct>[maxVertices];
+	if (adjList == nullptr){
 		cerr << "memory allocated wrong!" << endl;
 		exit(1);
 	}
 	for (int i = 0; i < maxVertices; i++)
-		AdjList[i].adj = nullptr;
+		adjList[i].adj = nullptr;
 }
 
 template<class VerStruct>
 LinkGraph<VerStruct>::~LinkGraph(){
 	for (int i = 0; i < numVertices; i++){
-		Edge * temp = AdjList[i].adj;
+		Edge * temp = adjList[i].adj;
 		while (temp != nullptr){
-			AdjList[i].adj = temp->linker;
+			adjList[i].adj = temp->linker;
 			delete temp;
-			temp = AdjList[i].adj;
+			temp = adjList[i].adj;
 		}
 	}
-	delete[] AdjList;
+	delete[] adjList;
 }
 
 template<class VerStruct>
 VerStruct LinkGraph<VerStruct>::GetValue(int ver){
-	return AdjList[ver].data;
+	return adjList[ver].data;
 }
 
 template<class VerStruct>
 EdgeStruct LinkGraph<VerStruct>::GetWeight(int v1, int v2){
 	if (v1 != -1 && v2 != -1){
-		Edge * temp = AdjList[v1].adj;
+		Edge * temp = adjList[v1].adj;
 		while (temp != nullptr && temp->dest != v2)
 			temp = temp->linker;
 
@@ -374,7 +381,7 @@ EdgeStruct LinkGraph<VerStruct>::GetWeight(int v1, int v2){
 template<class VerStruct>
 int LinkGraph<VerStruct>::GetFirstNeighbor(int ver){
 	if (ver != -1){
-		Edge *temp = AdjList[ver].adj;
+		Edge *temp = adjList[ver].adj;
 		if (temp != nullptr)return temp->dest;
 		else return -1;
 	}
@@ -385,7 +392,7 @@ int LinkGraph<VerStruct>::GetFirstNeighbor(int ver){
 template<class VerStruct>
 int LinkGraph<VerStruct>::GetNextNeighbor(int ver, int verx){
 	if (ver != 1){
-		Edge *temp = AdjList[ver].adj;
+		Edge *temp = adjList[ver].adj;
 		while (temp != nullptr && temp->dest != verx) 
 			temp = temp->linker;
 
@@ -398,34 +405,34 @@ int LinkGraph<VerStruct>::GetNextNeighbor(int ver, int verx){
 template<class VerStruct>
 bool LinkGraph<VerStruct>::InsertVertice(const VerStruct& vertex){
 	if (numVertices == maxVertices) return false;
-	AdjList[numVertices++].data = vertex;
+	adjList[numVertices++].data = vertex;
 	return true;
 }
 template<class VerStruct>
 bool LinkGraph<VerStruct>::RemoveVertice(int ver){
 	Edge *temp= nullptr,  *sub = nullptr, *aux = nullptr;
-	while (AdjList[ver].adj != nullptr){
-		temp = AdjList[ver].adj;
-		sub = AdjList[temp->dest].adj;
+	while (adjList[ver].adj != nullptr){
+		temp = adjList[ver].adj;
+		sub = adjList[temp->dest].adj;
 		
 		while (temp != nullptr && temp->dest != ver){
 			aux = sub;
 			sub = sub->linker;
 		}
 		if (sub != nullptr){
-			if (aux != nullptr) AdjList[temp->dest].adj = sub->linker;
+			if (aux != nullptr) adjList[temp->dest].adj = sub->linker;
 			else aux->linker = sub->linker;
 			delete sub;
 		}
-		AdjList[ver].adj = temp->linker;
+		adjList[ver].adj = temp->linker;
 		delete temp;
 		numEdges--;
 	}
 	numVertices--;
-	AdjList[ver].data = AdjList[numVertices].data;
-	temp = AdjList[ver].adj = AdjList[numVertices].adj;
+	adjList[ver].data = adjList[numVertices].data;
+	temp = adjList[ver].adj = adjList[numVertices].adj;
 	while (temp != nullptr){
-		sub = AdjList[temp->dest].adj;
+		sub = adjList[temp->dest].adj;
 		while (sub!= nullptr)
 		if (sub->dest == numVertices){
 			sub->dest = ver;
@@ -440,7 +447,7 @@ template<class VerStruct>
 bool LinkGraph<VerStruct>::InsertEdge(int v1, int v2, EdgeStruct weight){
 	if (dirOfGraph == Undirective){
 		if (v1 >= 0 && v1 < numVertices && v2 >= 0 && v2 < numVertices){
-			Edge *sub = nullptr, *temp = AdjList[v1].adj;
+			Edge *sub = nullptr, *temp = adjList[v1].adj;
 
 			while (temp != nullptr && temp->dest != v2)
 				temp = temp->linker;
@@ -450,13 +457,13 @@ bool LinkGraph<VerStruct>::InsertEdge(int v1, int v2, EdgeStruct weight){
 			sub = new Edge;
 			temp->dest = v2;
 			temp->cost = weight;
-			temp->linker = AdjList[v1].adj;
-			AdjList[v1].adj = temp;
+			temp->linker = adjList[v1].adj;
+			adjList[v1].adj = temp;
 
 			sub->dest = v1;
 			sub->cost = weight;
-			sub->linker = AdjList[v2].adj;
-			AdjList[v2].adj = sub;
+			sub->linker = adjList[v2].adj;
+			adjList[v2].adj = sub;
 			numEdges++;
 			return true;
 		}
@@ -464,7 +471,7 @@ bool LinkGraph<VerStruct>::InsertEdge(int v1, int v2, EdgeStruct weight){
 	}
 	if (dirOfGraph == Directive){
 		if (v1 >= 0 && v1 < numVertices && v2 >= 0 && v2 < numVertices){
-			Edge *sub = nullptr, *temp = AdjList[v1].adj;
+			Edge *sub = nullptr, *temp = adjList[v1].adj;
 
 			while (temp != nullptr && temp->dest != v2)
 				temp = temp->linker;
@@ -474,8 +481,8 @@ bool LinkGraph<VerStruct>::InsertEdge(int v1, int v2, EdgeStruct weight){
 			sub = new Edge;
 			temp->dest = v2;
 			temp->cost = weight;
-			temp->linker = AdjList[v1].adj;
-			AdjList[v1].adj = temp;
+			temp->linker = adjList[v1].adj;
+			adjList[v1].adj = temp;
 			numEdges++;
 			return true;
 		}
@@ -488,25 +495,25 @@ template<class VerStruct>
 bool LinkGraph<VerStruct>::RemoveEdge(int v1, int v2){
 	if (dirOfGraph == Undirective){
 		if (v1 != -1 && v2 != -1){
-			Edge *temp = AdjList[v1].adj, *sub = nullptr, *aux = temp;
+			Edge *temp = adjList[v1].adj, *sub = nullptr, *aux = temp;
 			while (temp != nullptr && temp->dest != v2){
 				temp = sub;
 				temp = temp->linker;
 			}
 			if (temp != nullptr){
-				if (temp == aux) AdjList[v1].adj = temp->linker;
+				if (temp == aux) adjList[v1].adj = temp->linker;
 				else sub->linker = temp->linker;
 				delete temp;
 			}
 			else return false;
 
-			temp = AdjList[v2].adj, sub = nullptr, aux = temp;
+			temp = adjList[v2].adj, sub = nullptr, aux = temp;
 			while (temp != nullptr && temp->dest != v1){
 				temp = sub;
 				temp = temp->linker;
 			}
 			if (temp != nullptr){
-				if (temp == aux) AdjList[v2].adj = temp->linker;
+				if (temp == aux) adjList[v2].adj = temp->linker;
 				else sub->linker = temp->linker;
 				delete temp;
 				return true;
@@ -517,13 +524,13 @@ bool LinkGraph<VerStruct>::RemoveEdge(int v1, int v2){
 	}
 	if (dirOfGraph == Directive){
 		if (v1 != -1 && v2 != -1){
-			Edge *temp = AdjList[v1].adj, *sub = nullptr, *aux = temp;
+			Edge *temp = adjList[v1].adj, *sub = nullptr, *aux = temp;
 			while (temp != nullptr && temp->dest != v2){
 				temp = sub;
 				temp = temp->linker;
 			}
 			if (temp != nullptr){
-				if (temp == aux) AdjList[v1].adj = temp->linker;
+				if (temp == aux) adjList[v1].adj = temp->linker;
 				else sub->linker = temp->linker;
 				delete temp;
 				return true;
@@ -566,7 +573,7 @@ ostream& operator << (ostream& out, LinkGraph<VerStruct> G){
 	for (int i = 0; i < numVer; i++)
 	for (int j = 0; j < n; j++){
 		EdgeStruct weight = G.GetWeight(i, j);
-		if (weight > 0 && weight < MAXWEIGHT){
+		if (weight > 0 && weight < MaXWEIGHT){
 			v1 = G.GetValue(i);
 			v2 = G.GetValue(j);
 			cout << "( " << v1 << ", " << v2 << " )" << endl;

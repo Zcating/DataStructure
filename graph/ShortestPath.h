@@ -2,7 +2,7 @@
 #define _SHORTESETPATH_H
 class SHORTESTPATH{
 public:
-	SHORTESTPATH(int size = DefaultVertices);
+	SHORTESTPATH(int size = defaultVertices);
 	~SHORTESTPATH(){ delete[] path; delete[] dist; };
 	void Dijkstra(Graph<VerDataInfo> & gra, VerDataInfo vertex);
 	void Dijkstra(Graph<VerDataInfo> & gra, int ver);
@@ -13,11 +13,11 @@ public:
 private:
 	int numVertices;
 	int start;
-	/*Dijkstra varity*/
+	/*Dijkstra varities*/
 	int *path;
 	EdgeStruct *dist;
 
-	/*Floyd varity*/
+	/*Floyd varities*/
 	int **FPath;
 	EdgeStruct **FDist;
 	

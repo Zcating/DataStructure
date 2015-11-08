@@ -10,19 +10,36 @@ using namespace std;
 #include "TraversingGraph.h"
 
 //DFS
-void DFS_Recursive(Graph<VerDataInfo> & gra, int ver, bool visit[]){
-	visit[ver] = true;
+void DFS_Recursive(Graph<VerDataInfo> & gra, int ver, bool visited[]){
+	visited[ver] = true;
 	/*Add some visitng function here*/
 	cout << gra.GetValue(ver) << endl;
 	int verx = gra.GetFirstNeighbor(ver);
 	while (verx != -1){
-		if (visit[verx] == false)
-			DFS_Recursive(gra, verx, visit);
+		if (visited[verx] == false)
+			DFS_Recursive(gra, verx, visited);
 
 		verx = gra.GetNextNeighbor(ver, verx);
 	}
 }
+void DFS_None_Recursive(Graph<VerDataInfo> & gra, int ver, bool visited[]) {
+	stack<int> sver;
+	sver.push(ver);
+	while (!sver.empty()) {
+		ver = sver.top();
+		if (visited[ver] == false) {
+			visited[ver] = true;
+			/*Add some visitng function here*/
+			cout << gra.GetValue(ver) << endl;/*This is the example*/
 
+			//put all adjacent edge of  loc`s edge into the stack
+			for (int locx = gra.GetFirstNeighbor(ver); locx != -1; locx = gra.GetNextNeighbor(ver, locx))
+				if (visited[locx] == false)
+					sver.push(locx);
+		}
+		else sver.pop();
+	}
+}
 void DFS(Graph<VerDataInfo> & gra, VerDataInfo & vertex, DFSFunctionType FT){
 	int loc = gra.GetVerticePos(vertex), num = gra.SizeOfVertices();
 	bool * visited = new bool[num];
@@ -33,22 +50,7 @@ void DFS(Graph<VerDataInfo> & gra, VerDataInfo & vertex, DFSFunctionType FT){
 		DFS_Recursive(gra, loc, visited);
 
 	if (FT == Non_Recursive){
-		stack<int> sver;
-		sver.push(loc);
-		while (!sver.empty()){
-			loc = sver.top();
-			if (visited[loc] == false){
-				visited[loc] = true;
-				/*Add some visitng function here*/
-				cout << gra.GetValue(loc) << endl;/*This is the example*/
-
-				//put all adjacent edge of  loc`s edge into the stack
-				for (int locx = gra.GetFirstNeighbor(loc); locx != -1; locx = gra.GetNextNeighbor(loc, locx))
-				if (visited[locx] == false)
-					sver.push(locx);
-			}
-			else sver.pop();
-		}
+		DFS_None_Recursive(gra, loc, visited);
 	}
 	delete[] visited;
 }
@@ -67,22 +69,7 @@ void DFS(Graph<VerDataInfo> & gra, int ver, DFSFunctionType FT){
 		DFS_Recursive(gra, loc, visited);
 
 	if (FT == Non_Recursive){
-		stack<int> sver;
-		sver.push(loc);
-		while (!sver.empty()){
-			loc = sver.top();
-			if (visited[loc] == false){
-				visited[loc] = true;
-				/*Add some visitng function here*/
-				cout << gra.GetValue(loc) << endl;/*This is the example*/
-
-				//put all adjacent edge of  loc`s edge into the stack
-				for (int locx = gra.GetFirstNeighbor(loc); locx != -1; locx = gra.GetNextNeighbor(loc, locx))
-				if (visited[locx] == false)
-					sver.push(locx);
-			}
-			else sver.pop();
-		}
+		DFS_None_Recursive(gra, loc, visited);
 	}
 	delete[] visited;
 }

@@ -12,8 +12,8 @@ private:
 	/*'False' means that there is not loop in the graph. 
 	'True' means that there is one loop at least in graph */
 	bool flagOfLoop;
-	vector<int> TopologicalVertex;
-	vector<pair<int,int>> CriticalAction;
+	vector<int> topologicalVertex;
+	vector<pair<int,int>> criticalAction;
 };
 
 #endif

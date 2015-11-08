@@ -205,12 +205,12 @@ void SHORTESTPATH::Dijkstra_Heap(Graph<VerDataInfo> & gra, int ver) {
 		SetVer[verx] = true;							//The vertice has been visited
 		vheap.Remove();									//Remove the top of the heap
 
-		for (int verk = gra.GetFirstNeighbor(verx); verk != -1; verk = gra.GetNextNeighbor(verx, verk)) {
-			EdgeStruct weight = gra.GetWeight(verx, verk);
-			if (SetVer[verk]==false && dist[verx] < MAXWEIGHT && dist[verx] + weight < dist[verk]) {
-				dist[verk] = dist[verx] + weight;
-				path[verk] = verx;
-				vheap.Insert(MinPos(verk, dist[verk]));	//	Get the adjacent vertice of verk 
+		for (int verSelector = gra.GetFirstNeighbor(verx); verSelector != -1; verSelector = gra.GetNextNeighbor(verx, verSelector)) {
+			EdgeStruct weight = gra.GetWeight(verx, verSelector);
+			if (SetVer[verSelector]==false && dist[verx] < MAXWEIGHT && dist[verx] + weight < dist[verSelector]) {
+				dist[verSelector] = dist[verx] + weight;
+				path[verSelector] = verx;
+				vheap.Insert(MinPos(verSelector, dist[verSelector]));	//	Get the adjacent vertice of verSelector 
 			}
 		}
 	}
