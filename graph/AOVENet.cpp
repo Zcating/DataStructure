@@ -1,11 +1,4 @@
-#include <fstream>
-#include <vector>
-#include <stack>
-#include <queue>
-#include <iostream>
-#include <string>
-using namespace std;
-
+#include "stdafx.h"
 #include "graph.h"
 #include "AOVENet.h"
 
