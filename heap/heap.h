@@ -62,31 +62,31 @@ type MinHeap<type>::Front(){
 template<class type>
 void MinHeap<type>::SiftDown(int start, int num){
 
-	int sub = start, aux = 2 * sub + 1;// 'aux' is left child of 'sub'
+	int index = start, chlidIndex = 2 * index + 1;
 	type temp = Heap[sub];
-	while (aux <= num){
-		if (aux < num && Heap[aux] > Heap[aux + 1]) aux++;
-		if (temp <= Heap[aux]) break;
+	while (childIndex <= num){
+		if (childIndex < num && Heap[childIndex] > Heap[childIndex + 1]) aux++;
+		if (temp <= Heap[childIndex]) break;
 		else {
-			Heap[sub] = Heap[aux];
-			sub = aux;
-			aux = 2 * aux + 1;
+			Heap[index] = Heap[childIndex];
+			index = childIndex;
+			childIndex = 2 * childIndex + 1;
 		}
-		Heap[sub] = temp;
+		Heap[index] = temp;
 	}
 }
 
 template<class type>
 void MinHeap<type>::SiftUp(int start){
-	int aux = start, sub = (aux - 1) / 2;
-	type temp = Heap[aux];
-	while (aux > 0){
-		if (Heap[sub] <= temp) break;
+	int childIndex = start, index = (index - 1) / 2;
+	type temp = Heap[index];
+	while (childIndex > 0){
+		if (Heap[childIndex] <= temp) break;
 		else{
-			Heap[aux] = Heap[sub];
-			aux = sub;
-			sub = (sub - 1) / 2;
+			Heap[childIndex] = Heap[index];
+			childIndex = index;
+			index = (index - 1) / 2;
 		}
 	}
-	Heap[aux] = temp;
+	Heap[childIndex] = temp;
 }
